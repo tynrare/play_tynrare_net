@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "parcel src/index.pug"
+    "start": "parcel src/index.pug",
+    "build": "parcel build src/index.pug"
   },
   "author": "",
   "license": "ISC",
