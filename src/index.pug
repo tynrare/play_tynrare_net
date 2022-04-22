@@ -1,0 +1,25 @@
+head
+	link(rel="stylesheet", href="./styles/reset.css")
+
+	link(rel="stylesheet", href="index.less")
+	script(type="module", src="./index.js" async defer)
+
+body.fancy
+	#frontdoor.fancy
+		db: include palette
+		sequence#dust-0.fancy
+			entry#game
+				showwhile game
+				content.mutable
+			entry#dust-1
+				//showon postinit
+				showwhile root
+				hideon button play
+				content: h1 ohh.. no game here.. yet?
+			entry#main_menu
+				showwhile root
+				hideon button play
+				content: button#play play
+			entry
+				showon button play
+				#hilo_container
