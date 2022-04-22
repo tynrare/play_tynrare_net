@@ -15,11 +15,14 @@ class Dust0 {
 	init(palette = 'pineapple32') {
 		this.tiles = document.querySelectorAll('tile');
 		this.dbpalette = document.querySelector('db#palette-' + palette);
-		this.palette = this.dbpalette.innerHTML.split('\n');
 
 		if (!this.dbpalette) {
 			throw new Error(`db#palette-pineapple32 wasn't found`);
 		}
+
+		this.palette = this.dbpalette.innerHTML.split('\n');
+
+		console.log(`Palette "${palette}" loaded`, this.palette);
 
 		return this;
 	}
@@ -27,7 +30,7 @@ class Dust0 {
 	exec() {
 		this.active = true;
 
-		for(let i = 0; i < this.tiles.length; i++) {
+		for (let i = 0; i < this.tiles.length; i++) {
 			this.registerTileInteractive(this.tiles[i]);
 		}
 
