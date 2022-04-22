@@ -1,4 +1,6 @@
 import { dust0 } from './dust-0.js';
+import { Messages } from './messages.js';
+import initHilo from './render/index.js';
 
 class Dust0 {
 	constructor() {
@@ -20,7 +22,9 @@ class Dust0 {
 			throw new Error(`db#palette-pineapple32 wasn't found`);
 		}
 
-		this.palette = this.dbpalette.innerHTML.split('\n');
+		const arg = this.dbpalette.innerHTML;
+		const separator = arg.includes('\n') ? '\n' : ' ';
+		this.palette = arg.split(separator);
 
 		console.log(`Palette "${palette}" loaded`, this.palette);
 
@@ -59,9 +63,27 @@ class Dust0 {
 }
 
 function main() {
-	dust0();
+	const sequence = document.querySelector('sequence#dust-0');
+	const messages = new Messages().init(sequence);
 
+	messages.event('postinit');
+	messages.state('game');
+
+	const pixels = 512;
+	const tile = 64;
+	const tiles =  Math.pow(pixels / tile, 2);
+
+	let content = '';
+	for (let i = 0; i < tiles; i++) {
+		content += '<tile></tile>';
+	}
+
+	messages.find('game').write(content);
+
+	dust0();
 	new Dust0().init('tyndustre_220422_00').exec();
+
+	//initHilo();
 }
 
 main();
