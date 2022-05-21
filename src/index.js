@@ -191,7 +191,7 @@ function main() {
 			const deltaX = startX - moveX;
 			const deltaY = startY - moveY;
 			const longestDelta = Math.max(Math.abs(deltaX), Math.abs(deltaY));
-			
+
 			if (Math.abs(longestDelta) < 100) {
 				return;
 			}
@@ -201,6 +201,24 @@ function main() {
 				Math.abs(deltaY) === longestDelta ? -Math.sign(deltaY) : 0
 			);
 		});
+	}
+
+	{
+		const frontdoor = document.querySelector('#frontdoor');
+		function resize() {
+			const width = window.innerWidth;
+			const height = window.innerHeight;
+			const min = Math.min(width, height);
+			frontdoor.style.transform = `scale(${Math.min(1, min / frontdoor.clientWidth)})`;
+			if (width < height) {
+				frontdoor.style.transformOrigin = 'left';
+			} else {
+				frontdoor.style.transformOrigin = 'top';
+			}
+		}
+
+		resize();
+		window.addEventListener('resize', resize);
 	}
 }
 
