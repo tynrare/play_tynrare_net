@@ -8,7 +8,17 @@
 	&.fancy {
 		border-radius: 10px;
 		box-shadow: 0px 0px 5px #00000015;
+
+		width: 520px;
+		height: 520px;
+		padding: 4px;
 		//box-shadow: inset 0px 0px 5px 2px #000000aa;
+
+		background: #58a;
+		background-image: linear-gradient(#ffffff50 2px, transparent 0),
+			linear-gradient(90deg, #ffffff50 2px, transparent 0);
+		background-size: 128px 128px;
+		background-position: 3px 3px;
 	}
 }
 
@@ -19,23 +29,5 @@
 
 		border-radius: 7px;
 		overflow: clip;
-	};
-
-	tile {
-		width: 64px;
-		height: 64px;
-		display: block;
-
-		&.clicked {
-			background-color: white !important;
-		}
-
-		transition-duration: 300ms;
-		&:hover {
-			transform: scale(1.2);
-			border-radius: 8px;
-			z-index: 1;
-			box-shadow: 0px 0px 2px #00000030;
-		}
 	}
 }
