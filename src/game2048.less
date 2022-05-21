@@ -1,0 +1,62 @@
+entry#game content.game2048 {
+	--color-a: rgba(0, 0, 0, 0.438);
+
+	tile {
+		width: 128px;
+		height: 128px;
+
+		border-radius: 3px;
+		display: flex;
+
+		&[data-tile] {
+			background-color: orange;
+			box-shadow: inset 0px -5px rgba(0, 0, 0, 0.2);
+			border-radius: 10px;
+		}
+
+		@keyframes appear {
+			0% {
+				opacity: 0;
+				transform: scale(0.3);
+			}
+
+			100% {
+				opacity: 1;
+				transform: scale(1);
+			}
+		}
+
+		@keyframes merged {
+			0% {
+				transform: scale(1);
+				text-shadow: 0px 2px rgba(0, 0, 0, 0.397);
+			}
+
+			50% {
+				transform: scale(1.2);
+				text-shadow: 10px 8px rgba(0, 0, 0, 0.2);
+			}
+
+			100% {
+				transform: scale(1);
+				text-shadow: 0px 2px rgba(0, 0, 0, 0.397);
+			}
+		}
+
+		&.animate-appear {
+			animation: appear 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+		}
+
+		&.animate-merge::after {
+			animation: merged 0.4s ease-in;
+		}
+
+		&::after {
+			font-size: 4em;
+			margin: auto;
+			content: attr(data-tile);
+			color: white;
+			text-shadow: 0px 2px rgba(0, 0, 0, 0.397);
+		}
+	}
+}
