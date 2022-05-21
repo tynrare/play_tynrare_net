@@ -176,6 +176,32 @@ function main() {
 				break;
 		}
 	});
+
+	{
+		let startX, startY, moveX, moveY;
+		document.body.addEventListener('touchstart', (ev) => {
+			startX = ev.touches[0].clientX;
+			startY = ev.touches[0].clientY;
+		});
+		document.body.addEventListener('touchmove', (ev) => {
+			moveX = ev.touches[0].clientX;
+			moveY = ev.touches[0].clientY;
+		});
+		document.body.addEventListener('touchend', (ev) => {
+			const deltaX = startX - moveX;
+			const deltaY = startY - moveY;
+			const longestDelta = Math.max(Math.abs(deltaX), Math.abs(deltaY));
+			
+			if (Math.abs(longestDelta) < 100) {
+				return;
+			}
+
+			game2048.step(
+				Math.abs(deltaX) === longestDelta ? -Math.sign(deltaX) : 0,
+				Math.abs(deltaY) === longestDelta ? -Math.sign(deltaY) : 0
+			);
+		});
+	}
 }
 
 main();
