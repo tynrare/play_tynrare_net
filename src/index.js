@@ -14,8 +14,9 @@ function cssAnimate(element, name, duration) {
 const palette = new Palette('pineapple32');
 
 class Game2048Tile {
-	constructor(pow = 1) {
+	constructor(turnstamp, pow = 1) {
 		this.pow = pow;
+		this.turnstamp = turnstamp;
 	}
 
 	get score() {
@@ -23,13 +24,28 @@ class Game2048Tile {
 	}
 
 	get title() {
-		return this.score;
+		return Game2048Tile.titles[this.pow - 1] || '◌';
 	}
 
 	get color() {
 		return '#' + palette.colors[this.pow];
 	}
 }
+
+Game2048Tile.titles = [
+	' ∙',
+	' ∙ ∙',
+	' ∙ ∙ ∙',
+	'◉',
+	'◉◉',
+	'◉◉◉',
+	'✦',
+	'✦✦',
+	'✦✦✦',
+	'★',
+	'★★',
+	'★★★'
+];
 
 class Game2048 {
 	constructor(messages, container, gridsize = 4) {
@@ -40,6 +56,7 @@ class Game2048 {
 
 	init() {
 		this.turn = 0;
+		this.score = 0;
 		this.tiles = Array.apply(null, Array(Math.pow(this.gridsize, 2))).map(() => null);
 		this.tilesBuffer = [];
 
@@ -48,7 +65,7 @@ class Game2048 {
 
 	run() {
 		this.addNewTile();
-
+		this.calcScore();
 		this.draw(false);
 
 		return this;
@@ -70,9 +87,19 @@ class Game2048 {
 
 		if (moved) {
 			this.addNewTile();
+			this.calcScore();
 			this.draw();
 		} else if (this.isGameOver()) {
 			this.messages.state('gameover');
+		}
+	}
+
+	calcScore() {
+		for (const i in this.tiles) {
+			const tile = this.tiles[i];
+			if (tile && tile.turnstamp === this.turn) {
+				this.score += tile.score;
+			}
 		}
 	}
 
@@ -164,13 +191,13 @@ class Game2048 {
 		} else if (this._getTile(to, tiles, buffer).pow === this._getTile(from, tiles, buffer).pow) {
 			if (buffer) {
 				buffer[to] = {
-					tile: new Game2048Tile(this._getTile(to, tiles, buffer).pow + 1),
+					tile: new Game2048Tile(this.turn, this._getTile(to, tiles, buffer).pow + 1),
 					fromx: movedfromx,
 					fromy: movedfromy,
-					fromi: from
+					fromi: from,
+					merged: true
 				};
 				buffer[from] = -1;
-				cssAnimate(this.container.children[to], 'animate-merge', 500);
 			}
 
 			return 3;
@@ -192,13 +219,8 @@ class Game2048 {
 			this._drawTiles();
 		}
 
-		let score = 0;
-		for (const i in this.tiles) {
-			score += this.tiles[i]?.score || 0;
-		}
-
-		this.messages.find('gamescore').write(score);
-		this.messages.find('leaderscore').write(this.writeLeaderScore(score));
+		this.messages.find('gamescore').write(this.score);
+		this.messages.find('leaderscore').write(this.writeLeaderScore(this.score));
 	}
 
 	_drawShiftAnimation() {
@@ -227,7 +249,15 @@ class Game2048 {
 			const tile = this.tiles[i];
 			if (tile) {
 				el.dataset.title = tile.title;
+				el.dataset.pow = tile.pow;
 				el.style.setProperty('--color', tile.color);
+
+				if (tile.turnstamp === this.turn && !this.tilesBuffer[i]?.merged) {
+					cssAnimate(el, 'animate-appear', 400);
+				}
+				if (this.tilesBuffer[i]?.merged) {
+					cssAnimate(el, 'animate-merge', 500);
+				}
 			} else {
 				delete el.dataset.title;
 			}
@@ -240,12 +270,11 @@ class Game2048 {
 			pos = (pos + 1) % this.tiles.length;
 		}
 
-		const tile = new Game2048Tile();
+		const tile = new Game2048Tile(this.turn);
 		if (random.next() > 0.9) {
 			tile.pow += 1;
 		}
 		this.tiles[pos] = tile;
-		cssAnimate(this.container.children[pos], 'animate-appear', 400);
 	}
 
 	writeLeaderScore(score) {

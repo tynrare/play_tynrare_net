@@ -4,28 +4,37 @@ entry#gamestats content {
 	display: grid;
 	grid-template-columns: auto auto;
 	grid-template-rows: 100px 64px;
-	grid-template-areas:
-		'gamescore gamescore'
-		'leaderscore buttons';
+	grid-template-areas: 'gamescore leaderscore';
 
 	color: white;
 	text-shadow: 0px 2px black;
 
 	entry#gamescore {
 		font-size: 100px;
-		margin: auto;
 		grid-area: gamescore;
+		display: flex;
 	}
 
 	#leaderscore {
 		font-size: 32px;
 		grid-area: leaderscore;
-		margin-bottom: 0;
-		margin-top: auto;
-	}
+		display: flex;
+		margin: auto 0 0 auto;
 
-	#buttons {
-		grid-area: buttons;
+		&::before {
+			content: '';
+			background-image: url('./styles/img/trophy.png');
+			background-size: contain;
+			width: 32px;
+			height: 32px;
+		}
+	}
+}
+
+entry#gamecontrols {
+	width: 100%;
+
+	content {
 		margin-right: 0;
 		margin-left: auto;
 		button {
@@ -76,12 +85,13 @@ entry#game.game2048 content {
 			transition-duration: 100ms;
 		}
 
-		&[data-title] {
+		&[data-title].dust-0 {
 			&::before {
 				position: absolute;
 				content: '';
 				width: calc(128px - var(--padding));
 				height: calc(128px - var(--padding));
+
 				background-color: var(--color);
 				box-shadow: inset 0px -5px rgba(0, 0, 0, 0.2), 0px 2px 4px 1px #0001;
 				border-radius: 10px;
@@ -90,11 +100,12 @@ entry#game.game2048 content {
 
 		&::after {
 			z-index: 1;
-			font-size: 3em;
-			margin: auto;
+			font-size: 2em;
+			margin: 2px auto auto 10px;
 			content: attr(data-title);
-			color: white;
-			text-shadow: 0px 2px rgba(0, 0, 0, 0.397);
+			color: #eeecec;
+			text-shadow: 0px 2px #000a;
+			//mix-blend-mode: overlay;
 		}
 
 		@keyframes appear {
@@ -135,6 +146,121 @@ entry#game.game2048 content {
 
 		&.animate-merge::after {
 			animation: merged 0.4s ease-in;
+		}
+	}
+}
+
+entry#game.game2048 content tile {
+	&[data-title]::before {
+		position: absolute;
+		content: '';
+		width: calc(128px - var(--padding));
+		height: calc(128px - var(--padding));
+		background-size: contain;
+	}
+
+	&[data-pow='1'] {
+		&::before {
+			background-image: url('./styles/img/game2048-tiles/gorilla.png');
+		}
+		&::after {
+			//color: #5b5b5b;
+		}
+	}
+	&[data-pow='2'] {
+		&::before {
+			background-image: url('./styles/img/game2048-tiles/rabbit.png');
+		}
+		&::after {
+			//color: #5b5b5b;
+		}
+	}
+	&[data-pow='3'] {
+		&::before {
+			background-image: url('./styles/img/game2048-tiles/chick.png');
+		}
+		&::after {
+			//color: x;
+		}
+	}
+	&[data-pow='4'] {
+		&::before {
+			background-image: url('./styles/img/game2048-tiles/giraffe.png');
+		}
+		&::after {
+			//color: x;
+		}
+	}
+	&[data-pow='5'] {
+		&::before {
+			background-image: url('./styles/img/game2048-tiles/monkey.png');
+		}
+		&::after {
+			//color: x;
+		}
+	}
+	&[data-pow='6'] {
+		&::before {
+			background-image: url('./styles/img/game2048-tiles/bear.png');
+		}
+		&::after {
+			//color: x;
+		}
+	}
+	&[data-pow='7'] {
+		&::before {
+			background-image: url('./styles/img/game2048-tiles/snake.png');
+		}
+		&::after {
+			//color: x;
+		}
+	}
+	&[data-pow='8'] {
+		&::before {
+			background-image: url('./styles/img/game2048-tiles/duck.png');
+		}
+		&::after {
+			//color: x;
+		}
+	}
+	&[data-pow='9'] {
+		&::before {
+			background-image: url('./styles/img/game2048-tiles/narwhal.png');
+		}
+		&::after {
+			//color: x;
+		}
+	}
+	&[data-pow='10'] {
+		&::before {
+			background-image: url('./styles/img/game2048-tiles/hippo.png');
+		}
+		&::after {
+			//color: x;
+		}
+	}
+	&[data-pow='11'] {
+		&::before {
+			background-image: url('./styles/img/game2048-tiles/pig.png');
+		}
+		&::after {
+			//color: x;
+		}
+	}
+	&[data-pow='12'] {
+		&::before {
+			background-image: url('./styles/img/game2048-tiles/parrot.png');
+		}
+		&::after {
+			//color: x;
+		}
+	}
+	&[data-pow='13'] {
+		&::before {
+			background-image: url('./styles/img/game2048-tiles/whale.png');
+		}
+		&::after {
+			//color: x;
 		}
 	}
 }
