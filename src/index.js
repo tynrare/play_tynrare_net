@@ -11,32 +11,45 @@ function cssAnimate(element, name, duration) {
 	}, duration);
 }
 
+const palette = new Palette('pineapple32');
+
 class Game2048Tile {
-	constructor() {
-		this.pow = 1;
+	constructor(pow = 1) {
+		this.pow = pow;
+	}
+
+	get score() {
+		return Math.pow(2, this.pow);
 	}
 
 	get title() {
-		return Math.pow(2, this.pow);
+		return this.score;
+	}
+
+	get color() {
+		return '#' + palette.colors[this.pow];
 	}
 }
 
 class Game2048 {
-	constructor(container, gridsize = 4) {
+	constructor(messages, container, gridsize = 4) {
 		this.container = container;
+		this.messages = messages;
 		this.gridsize = gridsize;
 	}
 
 	init() {
 		this.turn = 0;
 		this.tiles = Array.apply(null, Array(Math.pow(this.gridsize, 2))).map(() => null);
+		this.tilesBuffer = [];
 
 		return this;
 	}
 
 	run() {
 		this.addNewTile();
-		this.draw();
+
+		this.draw(false);
 
 		return this;
 	}
@@ -44,81 +57,179 @@ class Game2048 {
 	step(dirx = 0, diry = 0) {
 		this.turn += 1;
 
-		const hasSpace = this.tiles.includes(null);
+		this.tilesBuffer.length = 0;
+		const moved = this.moveTiles(dirx, diry, this.tiles, this.tilesBuffer);
 
-		let moved = true;
-		let movedAny = false;
-		while (moved) {
-			moved = false;
-			const direction = Math.sign(dirx || 1) * Math.sign(diry || 1) * -1;
-			for (
-				let i = direction > 0 ? 0 : this.tiles.length - 1;
-				i < this.tiles.length && i >= 0;
-				i += direction
-			) {
-				if (this.tiles[i]) {
-					moved = this.moveTile(i, dirx, diry) || moved;
-				}
+		for (const i in this.tilesBuffer) {
+			if (this.tilesBuffer[i] === -1) {
+				this.tiles[i] = null;
+			} else if (this.tilesBuffer) {
+				this.tiles[i] = this.tilesBuffer[i].tile;
 			}
-
-			if (!hasSpace && !moved) {
-				return;
-			}
-
-			movedAny = moved || movedAny;
 		}
 
-		if (movedAny) {
+		if (moved) {
 			this.addNewTile();
 			this.draw();
+		} else if (this.isGameOver()) {
+			this.messages.state('gameover');
 		}
 	}
 
-	moveTile(index, dirx, diry) {
-		const xpos = index % this.gridsize;
-		const ypos = Math.floor(index / this.gridsize);
+	isGameOver() {
+		const hasSpace = this.tiles.includes(null);
+		const hasMoves =
+			hasSpace ||
+			this.moveTiles(-1, 0, this.tiles) ||
+			this.moveTiles(1, 0, this.tiles) ||
+			this.moveTiles(0, -1, this.tiles) ||
+			this.moveTiles(0, 1, this.tiles);
 
-		let x = xpos;
-		let y = ypos;
-		if (dirx && x + dirx >= 0 && x + dirx < this.gridsize) {
-			x += dirx;
-		}
+		return !hasMoves;
+	}
 
-		if (diry && y + diry >= 0 && y + diry < this.gridsize) {
-			y += diry;
-		}
+	/**
+	 * @param {Array<Game2048Tile?>} tiles array to get tiles from
+	 * @param {Array<Game2048Tile?>?} buffer array to write results to
+	 */
+	moveTiles(dirx, diry, tiles, buffer) {
+		let moved = false;
+		for (let y = 0; y < this.gridsize; y++) {
+			const cy = diry <= 0 ? y : this.gridsize - y - 1;
+			for (let x = 0; x < this.gridsize; x++) {
+				const cx = dirx <= 0 ? x : this.gridsize - x - 1;
+				const goal = cy * this.gridsize + cx;
 
-		const newindex = y * this.gridsize + x;
-		if (newindex !== index) {
-			let allowmove = true;
-			if (this.tiles[newindex]) {
-				allowmove = this.tiles[newindex].pow === this.tiles[index].pow;
-				if (allowmove) {
-					this.tiles[index].pow += 1;
-					cssAnimate(this.container.children[newindex], 'animate-merge', 500);
+				for (let i = 1; dirx && i + x < this.gridsize; i++) {
+					const posx = cx + i * -dirx;
+					const target = cy * this.gridsize + posx;
+
+					const code = this.moveTile(target, goal, tiles, buffer);
+					moved = moved || code === 1 || code === 3;
+
+					if (code >= 2) {
+						break;
+					}
+				}
+
+				for (let i = 1; diry && i + y < this.gridsize; i++) {
+					const posy = cy + i * -diry;
+					const target = posy * this.gridsize + cx;
+
+					const code = this.moveTile(target, goal, tiles, buffer);
+					moved = moved || code === 1 || code === 3;
+					if (code >= 2) {
+						break;
+					}
 				}
 			}
-
-			if (allowmove) {
-				this.tiles[newindex] = this.tiles[index];
-				this.tiles[index] = null;
-			}
-
-			return allowmove;
 		}
 
-		return false;
+		return moved;
 	}
 
-	draw() {
+	_getTile(index, tiles, buffer = []) {
+		if (buffer[index] === -1) {
+			return null;
+		}
+
+		return buffer[index]?.tile || tiles[index];
+	}
+
+	/**
+	 * @param {Array<Game2048Tile?>} tiles array to get tiles from
+	 * @param {Array<Game2048Tile?>?} buffer array to write results to
+	 * @returns {number} operation code. 0 - no target, 1 - tile moved, 2 - space already taken,  3 - tile merged
+	 */
+	moveTile(from, to, tiles, buffer) {
+		if (!this._getTile(from, tiles, buffer)) {
+			return 0;
+		}
+
+		const movedfromy = Math.floor(from / this.gridsize);
+		const movedfromx = from % this.gridsize;
+
+		if (!this._getTile(to, tiles, buffer)) {
+			if (buffer) {
+				buffer[to] = {
+					tile: this._getTile(from, tiles, buffer),
+					fromx: movedfromx,
+					fromy: movedfromy,
+					fromi: from
+				};
+				buffer[from] = -1;
+			}
+
+			return 1;
+		} else if (this._getTile(to, tiles, buffer).pow === this._getTile(from, tiles, buffer).pow) {
+			if (buffer) {
+				buffer[to] = {
+					tile: new Game2048Tile(this._getTile(to, tiles, buffer).pow + 1),
+					fromx: movedfromx,
+					fromy: movedfromy,
+					fromi: from
+				};
+				buffer[from] = -1;
+				cssAnimate(this.container.children[to], 'animate-merge', 500);
+			}
+
+			return 3;
+		}
+
+		return 2;
+	}
+
+	draw(animate = true) {
+		if (animate) {
+			this._drawShiftAnimation();
+			const turn = this.turn;
+			setTimeout(() => {
+				if (this.turn === turn) {
+					this._drawTiles();
+				}
+			}, 100);
+		} else {
+			this._drawTiles();
+		}
+
+		let score = 0;
+		for (const i in this.tiles) {
+			score += this.tiles[i]?.score || 0;
+		}
+
+		this.messages.find('gamescore').write(score);
+		this.messages.find('leaderscore').write(this.writeLeaderScore(score));
+	}
+
+	_drawShiftAnimation() {
+		for (let i = 0; i < this.tilesBuffer.length; i++) {
+			const movedata = this.tilesBuffer[i];
+			if (!movedata || movedata === -1) {
+				continue;
+			}
+
+			const y = Math.floor(i / this.gridsize);
+			const x = i % this.gridsize;
+			const el = this.container.children[movedata.fromi];
+			const deltax = x - movedata.fromx;
+			const deltay = y - movedata.fromy;
+			el.style.transform = `translate(${deltax * 128}px, ${deltay * 128}px)`;
+			el.classList.add('animate-transition');
+		}
+	}
+
+	_drawTiles() {
 		for (const i in this.tiles) {
 			const el = this.container.children[i];
+			el.style.transform = 'initial';
+			el.classList.remove('animate-transition');
 
 			const tile = this.tiles[i];
 			if (tile) {
-				el.dataset.tile = tile.title;
+				el.dataset.title = tile.title;
+				el.style.setProperty('--color', tile.color);
 			} else {
-				delete el.dataset.tile;
+				delete el.dataset.title;
 			}
 		}
 	}
@@ -134,7 +245,24 @@ class Game2048 {
 			tile.pow += 1;
 		}
 		this.tiles[pos] = tile;
-		cssAnimate(this.container.children[pos], 'animate-appear', 500);
+		cssAnimate(this.container.children[pos], 'animate-appear', 400);
+	}
+
+	writeLeaderScore(score) {
+		let leaderscore = this.getLeaderScore();
+
+		if (score > leaderscore) {
+			leaderscore = score;
+			localStorage.setItem('game.leaderscore', score);
+		}
+
+		return leaderscore;
+	}
+
+	getLeaderScore() {
+		const leaderscore = localStorage.getItem('game.leaderscore') || 0;
+
+		return Number(leaderscore);
 	}
 }
 
@@ -151,15 +279,28 @@ function genTiles(messages) {
 	messages.find('game').write(content);
 }
 
+function Palette(name) {
+	const str = document.querySelector('db#palette-' + name).innerHTML;
+	const separator = str.includes('\n') ? '\n' : ' ';
+
+	this.colors = str.split(separator);
+}
+
 function main() {
-	const sequence = document.querySelector('sequence#dust-0');
+	const sequence = document.querySelector('sequence#dust-220523');
 	const messages = new Messages().init(sequence);
 
 	messages.event('postinit');
-	messages.state('game');
 
 	genTiles(messages);
-	const game2048 = new Game2048(messages.find('game').contentNode).init().run();
+
+	let game2048;
+	messages.on('state game', () => {
+		game2048 = new Game2048(messages, messages.find('game').contentNode).init().run();
+	});
+
+	messages.state('game');
+
 	document.addEventListener('keydown', (ev) => {
 		switch (ev.code) {
 			case 'ArrowRight':

@@ -27,22 +27,18 @@ export class Message {
 	}
 
 	parse() {
-		this.contentNode = this.entry.querySelector('content');
-		this.simple = !Boolean(this.entry.childNodes.length);
-
-		// Root node mutable
-		this.mutable = this.entry.classList.contains('mutable');
-		// Content mutable
-		this.mutable =
-			this.mutable || (!this.simple && this.contentNode?.classList.contains('mutable'));
+		this.simple = !this.entry.children.length;
 
 		if (this.simple) {
 			this.contentNode = this.entry;
 		} else {
+			this.contentNode = this.entry.querySelector('content') || this.entry;
 			this.showonNode = this.entry.querySelector('showon');
 			this.hideonNode = this.entry.querySelector('hideon');
 			this.showwhileNode = this.entry.querySelector('showwhile');
 		}
+
+		this.mutable = this.contentNode.classList.contains('mutable');
 	}
 
 	show() {
@@ -86,7 +82,7 @@ export class Message {
 	 * @private
 	 */
 	set _content(value) {
-		return (this[this.simple ? 'entry' : 'contentNode'].innerHTML = value);
+		this[this.simple ? 'entry' : 'contentNode'].innerHTML = value;
 	}
 }
 
@@ -101,9 +97,9 @@ export class Messages {
 		this.content = content;
 		this.messages = {};
 
-		for (let i = 0; i < this.content.childNodes.length; i++) {
-			this.parse(this.content.childNodes[i]);
-		}
+		this.listeners = {};
+
+		this.parseEntries(this.content);
 
 		return this;
 	}
@@ -116,6 +112,13 @@ export class Messages {
 		return this.messages[id] ?? null;
 	}
 
+	parseEntries(container) {
+		for (let i = 0; i < container.children.length; i++) {
+			const el = container.children[i];
+			this.parse(el);
+		}
+	}
+
 	/**
 	 * @param {HTMLElement} entry .
 	 */
@@ -123,7 +126,18 @@ export class Messages {
 		// TODO: validate entry type
 
 		const id = entry.id || `i${this.guids++}`;
-		this.messages[id] = new Message(id).init(entry);
+		const message = (this.messages[id] = new Message(id).init(entry));
+
+		if (message.simple) {
+			return;
+		}
+
+		for (let i = 0; i < message.contentNode.children.length; i++) {
+			const el = message.contentNode.children[i];
+			if (el.tagName.toLowerCase() === 'entry') {
+				this.parse(el);
+			}
+		}
 
 		const buttons = entry.querySelectorAll('button');
 		for (let i = 0; i < buttons.length; i++) {
@@ -134,6 +148,10 @@ export class Messages {
 
 			button.addEventListener('click', () => {
 				this.event('button ' + button.id);
+
+				if (button.classList.contains('stateswitch')) {
+					this.state(button.id);
+				}
 			});
 		}
 	}
@@ -153,6 +171,24 @@ export class Messages {
 				message.hide();
 			}
 		}
+
+		for (const k in this.listeners) {
+			const l = this.listeners[k];
+			if (l.type === type) {
+				l.callback();
+			}
+		}
+	}
+
+	on(type, callback) {
+		const id = 'ev-' + this.guids++;
+		this.listeners[id] = { callback, type };
+
+		return id;
+	}
+
+	off(type) {
+		delete this.listeners[id];
 	}
 
 	/**
@@ -166,5 +202,7 @@ export class Messages {
 				message[action]();
 			}
 		}
+
+		this.event('state ' + type);
 	}
 }

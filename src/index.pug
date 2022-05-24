@@ -6,10 +6,31 @@ head
 body.fancy
 	#frontdoor.fancy
 		db: include palette
-		sequence#dust-0.fancy
-			entry#game
+		sequence#dust-220523.fancy
+
+			entry#gamestats.game2048
 				showwhile game
-				content.game2048.mutable
+				content
+					entry#gamescore.mutable 0
+					entry#leaderscore.mutable 0
+					entry#buttons
+						button#undo.disabled
+						button#game.stateswitch
+
+			entry#game.game2048
+				showwhile game
+				content.mutable
+
+			entry#gameover
+				showwhile gameover
+				content
+					label#defeat Поражение
+					button#game.stateswitch
+
+			entry#gamemeta
+				showon postinit
+				content v2
+
 			entry#dust-1
 				//showon postinit
 				showwhile root

@@ -1,17 +1,100 @@
-entry#game content.game2048 {
+entry#gamestats content {
+	width: 100%;
+	padding: 10px;
+	display: grid;
+	grid-template-columns: auto auto;
+	grid-template-rows: 100px 64px;
+	grid-template-areas:
+		'gamescore gamescore'
+		'leaderscore buttons';
+
+	color: white;
+	text-shadow: 0px 2px black;
+
+	entry#gamescore {
+		font-size: 100px;
+		margin: auto;
+		grid-area: gamescore;
+	}
+
+	#leaderscore {
+		font-size: 32px;
+		grid-area: leaderscore;
+		margin-bottom: 0;
+		margin-top: auto;
+	}
+
+	#buttons {
+		grid-area: buttons;
+		margin-right: 0;
+		margin-left: auto;
+		button {
+			width: 64px;
+			height: 64px;
+			background-size: contain;
+		}
+
+		button#game {
+			background-image: url('./styles/img/return.png');
+		}
+		button#undo {
+			background-image: url('./styles/img/rewind.png');
+		}
+	}
+}
+
+entry#game.game2048 content {
 	--color-a: rgba(0, 0, 0, 0.438);
+	width: 512px;
+	height: 512px;
+	// -- fix mobile
+	min-width: 512px;
+	min-height: 512px;
+
+	.fancy & {
+		border-radius: 10px;
+		box-shadow: 0px 0px 5px #00000015;
+
+		background: #f6fbff;
+		background-image: linear-gradient(#0002 2px, transparent 0),
+			linear-gradient(90deg, #0002 2px, transparent 0);
+		background-size: 128px 128px;
+		background-position: -1px -1px;
+	}
 
 	tile {
+		--padding: 8px;
 		width: 128px;
 		height: 128px;
+		padding: calc(var(--padding) / 2);
 
 		border-radius: 3px;
 		display: flex;
+		position: relative;
 
-		&[data-tile] {
-			background-color: orange;
-			box-shadow: inset 0px -5px rgba(0, 0, 0, 0.2);
-			border-radius: 10px;
+		&.animate-transition {
+			transition-duration: 100ms;
+		}
+
+		&[data-title] {
+			&::before {
+				position: absolute;
+				content: '';
+				width: calc(128px - var(--padding));
+				height: calc(128px - var(--padding));
+				background-color: var(--color);
+				box-shadow: inset 0px -5px rgba(0, 0, 0, 0.2), 0px 2px 4px 1px #0001;
+				border-radius: 10px;
+			}
+		}
+
+		&::after {
+			z-index: 1;
+			font-size: 3em;
+			margin: auto;
+			content: attr(data-title);
+			color: white;
+			text-shadow: 0px 2px rgba(0, 0, 0, 0.397);
 		}
 
 		@keyframes appear {
@@ -44,19 +127,33 @@ entry#game content.game2048 {
 		}
 
 		&.animate-appear {
-			animation: appear 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+			&::after,
+			&::before {
+				animation: appear 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+			}
 		}
 
 		&.animate-merge::after {
 			animation: merged 0.4s ease-in;
 		}
+	}
+}
 
-		&::after {
-			font-size: 4em;
-			margin: auto;
-			content: attr(data-tile);
-			color: white;
-			text-shadow: 0px 2px rgba(0, 0, 0, 0.397);
-		}
+entry#gameover {
+	font-size: 100px;
+	color: white;
+	color: white;
+	text-shadow: 0px 2px black;
+
+	content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	button {
+		width: 100px;
+		height: 100px;
+		background-image: url('./styles/img/return.png');
 	}
 }
