@@ -1,27 +1,38 @@
 entry#gamestats content {
-	width: 100%;
+	width: 50%;
+	margin-right: 0;
+	margin-left: auto;
 	padding: 10px;
 	display: grid;
 	grid-template-columns: auto auto;
-	grid-template-rows: 100px 64px;
+	grid-template-rows: auto;
 	grid-template-areas: 'gamescore leaderscore';
 
 	color: white;
 	text-shadow: 0px 2px black;
 
 	entry#gamescore {
-		font-size: 100px;
+		font-size: 32px;
 		grid-area: gamescore;
 		display: flex;
+
+		&::before {
+			content: '';
+			background-image: url('./styles/img/star.png');
+			background-size: contain;
+			width: 32px;
+			height: 32px;
+			margin: auto 0;
+		}
 	}
 
 	#leaderscore {
 		font-size: 32px;
 		grid-area: leaderscore;
 		display: flex;
-		margin: auto 0 0 auto;
 
 		&::before {
+			margin: auto 0;
 			content: '';
 			background-image: url('./styles/img/trophy.png');
 			background-size: contain;
@@ -31,16 +42,40 @@ entry#gamestats content {
 	}
 }
 
+sequence.game2048 {
+	@font-face {
+		font-family: 'ComicCAT';
+		src: url('./styles/Comic_CAT.otf');
+	}
+
+	@font-face {
+		font-family: 'Zyzol';
+		src: url('./styles/Zyzol.otf');
+	}
+
+	font-family: 'Zyzol';
+	button {
+		background-position: center;
+		background-repeat: no-repeat;
+		background-color: #797979;
+
+		box-shadow: inset 0px -5px rgba(0, 0, 0, 0.2), 0px 2px 4px 1px #0001;
+		border-radius: 10px;
+	}
+}
+
 entry#gamecontrols {
 	width: 100%;
 
 	content {
 		margin-right: 0;
 		margin-left: auto;
+		display: flex;
+		gap: 10px;
 		button {
 			width: 64px;
 			height: 64px;
-			background-size: contain;
+			background-size: 80%;
 		}
 
 		button#game {
@@ -62,17 +97,36 @@ entry#game.game2048 content {
 
 	.fancy & {
 		border-radius: 10px;
-		box-shadow: 0px 0px 5px #00000015;
+		box-shadow: 0px 0px 5px #00000015, inset 0px 0px 2px #000f;
 
-		background: #f6fbff;
-		background-image: linear-gradient(#0002 2px, transparent 0),
-			linear-gradient(90deg, #0002 2px, transparent 0);
-		background-size: 128px 128px;
-		background-position: -1px -1px;
+		.dust-1-background {
+			background: #f6fbff;
+			background-image: linear-gradient(#0002 2px, transparent 0),
+				linear-gradient(90deg, #0002 2px, transparent 0);
+			background-size: 128px 128px;
+			background-position: -1px -1px;
+		}
+
+		.dust-0-background {
+			// Colors
+			@bg-color: #ddd;
+			@dot-color: #444;
+
+			// Dimensions
+			@dot-size: 3px;
+			@dot-space: 128px;
+
+			background: linear-gradient(90deg, @bg-color (@dot-space - @dot-size), transparent 1%),
+				linear-gradient(@bg-color (@dot-space - @dot-size), transparent 1%), @dot-color;
+			background-size: @dot-space @dot-space;
+			background-position: 1px 1px;
+		}
+
+		.dust-0-background();
 	}
 
 	tile {
-		--padding: 8px;
+		--padding: 4px;
 		width: 128px;
 		height: 128px;
 		padding: calc(var(--padding) / 2);
@@ -106,6 +160,32 @@ entry#game.game2048 content {
 			color: #eeecec;
 			text-shadow: 0px 2px #000a;
 			//mix-blend-mode: overlay;
+		}
+
+		vfx.scoreNumber {
+			text-shadow: 0px 2px #000a;
+			z-index: 2;
+			font-size: 4em;
+			color: #eeecec;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			animation: vfx_float_up 0.5s ease-in-out;
+			animation-fill-mode: forwards;
+			animation-delay: 0.2s;
+			opacity: 0;
+		}
+
+		@keyframes vfx_float_up {
+			0% {
+				transform: translate(-50%, -50%);
+				opacity: 1;
+			}
+			100% {
+				opacity: 0;
+				transform: translate(-50%, -128px);
+			}
 		}
 
 		@keyframes appear {
@@ -157,6 +237,9 @@ entry#game.game2048 content tile {
 		width: calc(128px - var(--padding));
 		height: calc(128px - var(--padding));
 		background-size: contain;
+
+		box-shadow: 0px 1px 4px #0005;
+		border-radius: 7px;
 	}
 
 	&[data-pow='1'] {

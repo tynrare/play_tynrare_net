@@ -208,7 +208,7 @@ class Game2048 {
 
 	draw(animate = true) {
 		if (animate) {
-			this._drawShiftAnimation();
+			this._drawAnimations();
 			const turn = this.turn;
 			setTimeout(() => {
 				if (this.turn === turn) {
@@ -223,7 +223,7 @@ class Game2048 {
 		this.messages.find('leaderscore').write(this.writeLeaderScore(this.score));
 	}
 
-	_drawShiftAnimation() {
+	_drawAnimations() {
 		for (let i = 0; i < this.tilesBuffer.length; i++) {
 			const movedata = this.tilesBuffer[i];
 			if (!movedata || movedata === -1) {
@@ -257,6 +257,15 @@ class Game2048 {
 				}
 				if (this.tilesBuffer[i]?.merged) {
 					cssAnimate(el, 'animate-merge', 500);
+				}
+				if (tile.turnstamp === this.turn) {
+					const vfx = document.createElement('vfx');
+					vfx.innerHTML = '+' + tile.score;
+					vfx.classList.add('scoreNumber');
+					el.appendChild(vfx);
+					setTimeout(() => {
+						el.removeChild(vfx);
+					}, 700);
 				}
 			} else {
 				delete el.dataset.title;

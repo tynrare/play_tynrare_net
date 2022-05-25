@@ -3,10 +3,10 @@ head
 	link(rel="stylesheet", href="./styles/reset.css")
 	link(rel="stylesheet", href="index.less")
 
-body.fancy
+body.fancy.game2048
 	#frontdoor.fancy
 		db: include palette
-		sequence#dust-220523.fancy
+		sequence#dust-220523.fancy.game2048
 
 			entry#gamestats.game2048
 				showwhile game
@@ -20,7 +20,7 @@ body.fancy
 
 			entry#gamemeta
 				showon postinit
-				content v3
+				content v4
 
 			entry#gamecontrols
 				showwhile game

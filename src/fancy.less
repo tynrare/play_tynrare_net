@@ -17,11 +17,26 @@ sequence.fancy {
 	button {
 		cursor: pointer;
 		&.disabled {
-			opacity: 0.7
+			opacity: 0.7;
 		}
 	}
 }
 
-body.fancy {
-	background-color: #434d5b; 
+body.fancy.game2048 {
+	background-color: #434d5b;
+	background-image: url('./styles/img/pattern-gray.png');
+	background-size: 256px;
+
+	background-position: 0px;
+	animation: slide 999999s linear infinite;
+
+	@keyframes slide {
+		from {
+			background-position: 0px;
+		}
+
+		to {
+			background-position: 19999999px -19999999px;
+		}
+	}
 }
