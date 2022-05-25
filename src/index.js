@@ -373,7 +373,7 @@ function main() {
 			const deltaY = startY - moveY;
 			const longestDelta = Math.max(Math.abs(deltaX), Math.abs(deltaY));
 
-			if (Math.abs(longestDelta) < 100) {
+			if (Math.abs(longestDelta) < 50) {
 				return;
 			}
 

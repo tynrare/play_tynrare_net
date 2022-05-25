@@ -18,15 +18,16 @@ body.fancy.game2048
 				showwhile game
 				content.mutable
 
-			entry#gamemeta
-				showon postinit
-				content v4
-
 			entry#gamecontrols
 				showwhile game
 				content
-						button#undo.disabled
+						//button#undo.disabled
 						button#game.stateswitch
+
+			entry#gamemeta
+				showon postinit
+				content 
+					a v5
 
 			entry#gameover
 				showwhile gameover
