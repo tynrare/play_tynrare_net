@@ -235,7 +235,9 @@ class Game2048 {
 			const el = this.container.children[movedata.fromi];
 			const deltax = x - movedata.fromx;
 			const deltay = y - movedata.fromy;
-			el.style.transform = `translate(${deltax * 128}px, ${deltay * 128}px)`;
+			const bouncex = 16 * Math.sign(deltax);
+			const bouncey = 16 * Math.sign(deltay);
+			el.style.transform = `translate(${deltax * 128 + bouncex}px, ${deltay * 128 + bouncey}px)`;
 			el.classList.add('animate-transition');
 		}
 	}
