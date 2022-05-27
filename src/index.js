@@ -15,6 +15,9 @@ function main() {
 
 		game = Game2048(controls);
 	});
+	controls.on('gameover', () => {
+		ysdk.adv.showFullscreenAdv();
+	});
 
 	controls.state('game');
 	controls.event('devmode');

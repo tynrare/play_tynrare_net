@@ -1,24 +1,24 @@
 {
-  "name": "play.tynrare.net",
-  "version": "1.0.0",
-  "description": "",
-  "scripts": {
-    "start": "parcel src/index.pug",
-    "build": "parcel build src/index.pug"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@parcel/transformer-xml": "^2.6.0",
-    "gl-matrix": "^3.4.3",
-    "hilo3d": "^1.16.2",
-    "parcel": "^2.4.1",
-    "pixi.js": "^6.3.2",
-    "tone": "^14.7.77"
-  },
-  "devDependencies": {
-    "@parcel/transformer-less": "^2.4.1",
-    "@parcel/transformer-pug": "^2.4.1",
-    "querystring-es3": "^0.2.1"
-  }
+	"name": "play.tynrare.net",
+	"version": "1.0.0",
+	"description": "",
+	"scripts": {
+		"start": "parcel src/index.pug",
+		"build": "parcel build src/index.pug"
+	},
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"gl-matrix": "^3.4.3",
+		"hilo3d": "^1.16.2",
+		"pixi.js": "^6.3.2",
+		"tone": "^14.7.77"
+	},
+	"devDependencies": {
+		"parcel": "^2.4.1",
+		"@parcel/transformer-xml": "^2.6.0",
+		"@parcel/transformer-less": "^2.4.1",
+		"@parcel/transformer-pug": "^2.4.1",
+		"querystring-es3": "^0.2.1"
+	}
 }
