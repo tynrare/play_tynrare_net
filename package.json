@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@parcel/transformer-xml": "^2.6.0",
+    "gl-matrix": "^3.4.3",
     "hilo3d": "^1.16.2",
     "parcel": "^2.4.1",
     "pixi.js": "^6.3.2",

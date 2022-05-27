@@ -5,27 +5,34 @@ export default function main(controls) {
 	View.instance.dispose();
 	Inputs.instance.dispose();
 
-	const frontdoor = document.querySelector('#frontdoor');
-	View.instance.callback(() => {
-		const width = window.innerWidth;
-		const height = window.innerHeight;
-		const min = Math.min(width, height);
-		frontdoor.style.transform = `scale(${Math.min(1, min / frontdoor.clientWidth)})`;
-		if (width < height) {
-			frontdoor.style.transformOrigin = 'left';
-		} else {
-			frontdoor.style.transformOrigin = 'top';
-		}
-	});
+	const core = new Game2048(controls, controls.find('game').contentNode);
+	try {
+		const frontdoor = document.querySelector('#frontdoor');
+		View.instance.callback(() => {
+			const width = window.innerWidth;
+			const height = window.innerHeight;
+			const min = Math.min(width, height);
+			frontdoor.style.transform = `scale(${Math.min(1, min / frontdoor.clientWidth)})`;
+			if (width < height) {
+				frontdoor.style.transformOrigin = 'left';
+			} else {
+				frontdoor.style.transformOrigin = 'top';
+			}
+		});
 
-	//genTiles(controls);
+		//genTiles(controls);
 
-	const core = new Game2048(controls, controls.find('game').contentNode).init();
-	Assets.instance.preload().then(() => {
-		core.run();
-		Inputs.instance.callback((dirx, diry) => core.step(dirx, diry));
-		core.render.resize(512, 512);
-	});
+		core.init();
+		Assets.instance.preload().then(() => {
+			console.log('preloaded');
+			core.run();
+			Inputs.instance.callback((dirx, diry) => core.step(dirx, diry));
+			core.render.resize(512, 512);
+		});
+	} catch (err) {
+		controls.draw('devlog', err.message);
+		throw err;
+	}
 
 	return core;
 }
@@ -67,7 +74,7 @@ class View extends Event {
 		function resize() {}
 
 		resize();
-		window.addEventListener('resize', () => this.event('resized'));
+		window.addEventListener('resize', () => this.propagate('resized'));
 
 		return super.init(...arguments);
 	}
@@ -86,12 +93,18 @@ class Inputs extends Event {
 		this.guids = 0;
 		this._keyboard();
 		this._touch();
+		this.timestamp = Date.now();
+		this.threshold = 30;
 
 		return super.init(...arguments);
 	}
 
 	event(dirx, diry) {
-		this.propagate(dirx, diry);
+		const timestamp = Date.now();
+		if (timestamp - this.timestamp > this.threshold) {
+			this.propagate(dirx, diry);
+			this.timestamp = timestamp;
+		}
 	}
 
 	_keyboard() {
@@ -149,6 +162,27 @@ class Inputs extends Event {
 }
 
 // === Core {
+//
+
+class Game2048TileStep {
+	constructor(params) {
+		this.tile = params.tile;
+		this.posx = params.posx;
+		this.posy = params.posy;
+		this.posi = params.posi;
+		this.movetox = params.movetox ?? this.posx;
+		this.movetoy = params.movetoy ?? this.posy;
+		this.movetoi = params.movetoi ?? this.posi;
+	}
+
+	get movedeltax() {
+		return this.movetox - this.posx;
+	}
+
+	get movedeltay() {
+		return this.movetoy - this.posy;
+	}
+}
 
 class Game2048Tile {
 	constructor(turnstamp, pow = 1) {
@@ -185,9 +219,9 @@ Game2048Tile.titles = [
 ];
 
 class Game2048 {
-	constructor(messages, container, gridsize = 4) {
+	constructor(controls, container, gridsize = 4) {
 		this.container = container;
-		this.messages = messages;
+		this.controls = controls;
 		this.gridsize = gridsize;
 	}
 
@@ -196,7 +230,10 @@ class Game2048 {
 		this.score = 0;
 		this.tiles = Array.apply(null, Array(Math.pow(this.gridsize, 2))).map(() => null);
 		this.tilesBuffer = [];
-		this.render = new Render().init();
+		this.render = new Render().init(this.controls);
+
+		// 220527
+		this.stepDeltas = [];
 
 		return this;
 	}
@@ -213,6 +250,7 @@ class Game2048 {
 		this.turn += 1;
 
 		this.tilesBuffer.length = 0;
+		this.stepDeltas.length = 0;
 		const moved = this.moveTiles(dirx, diry, this.tiles, this.tilesBuffer);
 
 		for (const i in this.tilesBuffer) {
@@ -228,7 +266,7 @@ class Game2048 {
 			this.calcScore();
 			this.draw();
 		} else if (this.isGameOver()) {
-			this.messages.state('gameover');
+			this.controls.state('gameover');
 		}
 	}
 
@@ -313,6 +351,8 @@ class Game2048 {
 
 		const movedfromy = Math.floor(from / this.gridsize);
 		const movedfromx = from % this.gridsize;
+		const movetoy = Math.floor(to / this.gridsize);
+		const movetox = to % this.gridsize;
 
 		if (!this._getTile(to, tiles, buffer)) {
 			if (buffer) {
@@ -324,6 +364,16 @@ class Game2048 {
 				};
 				buffer[from] = -1;
 			}
+
+			this.stepDeltas[from] = new Game2048TileStep({
+				posx: movedfromx,
+				posy: movedfromy,
+				posi: from,
+				movetox,
+				movetoy,
+				movetoi: to,
+				tile: buffer[to].tile
+			});
 
 			return 1;
 		} else if (this._getTile(to, tiles, buffer).pow === this._getTile(from, tiles, buffer).pow) {
@@ -337,6 +387,16 @@ class Game2048 {
 				};
 				buffer[from] = -1;
 			}
+
+			this.stepDeltas[from] = new Game2048TileStep({
+				posx: movedfromx,
+				posy: movedfromy,
+				posi: from,
+				movetox,
+				movetoy,
+				movetoi: to,
+				tile: buffer[to].tile
+			});
 
 			return 3;
 		}
@@ -357,8 +417,8 @@ class Game2048 {
 			this._drawTiles();
 		}
 
-		this.messages.find('gamescore').write(this.score);
-		this.messages.find('leaderscore').write(this.writeLeaderScore(this.score));
+		this.controls.find('gamescore').write(this.score);
+		this.controls.find('leaderscore').write(this.writeLeaderScore(this.score));
 	}
 
 	$_drawAnimations() {
@@ -383,25 +443,37 @@ class Game2048 {
 	_drawTiles() {
 		const sprites = document.querySelector('db animals').innerHTML.split(',');
 		const drawdata = [];
-		for (let i = 0; i < this.tiles.length; i++) {
-			const tile = this.tiles[i];
-			const btile = this.tilesBuffer[i];
-			if (!tile) {
-				continue;
-			}
 
-			const posy = Math.floor(i / this.gridsize);
-			const posx = i % this.gridsize;
-			const posi = i;
-			const sprite = sprites[tile.pow - 1];
-			const movedfromx = btile?.fromx;
-			const movedfromy = btile?.fromy;
-			const movedfromi = btile?.fromi;
+		for (const i in this.stepDeltas) {
+			const step = this.stepDeltas[i];
+			const sprite = sprites[step.tile.pow - 1];
 
-			drawdata[i] = new StepData({ posx, posy, posi, sprite, movedfromx, movedfromy, movedfromi });
+			drawdata[i] = new StepData(Object.assign({ sprite }, step));
 		}
 
 		this.render.draw(drawdata);
+		drawdata.length = 0;
+
+		const stepstamp = this.turn;
+		setTimeout(() => {
+			if (this.turn !== stepstamp) {
+				return;
+			}
+			for (let i = 0; i < this.tiles.length; i++) {
+				const tile = this.tiles[i];
+				if (!tile || this.render.sprites[i]) {
+					continue;
+				}
+				const posy = Math.floor(i / this.gridsize);
+				const posx = i % this.gridsize;
+				const posi = i;
+				const sprite = sprites[tile.pow - 1];
+
+				drawdata[i] = new StepData({ posx, posy, posi, sprite, tile });
+			}
+
+			this.render.draw(drawdata);
+		}, 100);
 	}
 
 	$_drawTiles() {
@@ -466,6 +538,8 @@ class Game2048 {
 
 		return Number(leaderscore);
 	}
+
+	dispose() {}
 }
 
 // === dust to ashes
@@ -481,7 +555,7 @@ function cssAnimate(element, name, duration) {
 
 const palette = new Palette('pineapple32');
 
-function genTiles(messages) {
+function genTiles(controls) {
 	const pixels = 512;
 	const tile = 128;
 	const tiles = Math.pow(pixels / tile, 2);
@@ -491,7 +565,7 @@ function genTiles(messages) {
 		content += '<tile></tile>';
 	}
 
-	messages.find('game').write(content);
+	controls.find('game').write(content);
 }
 
 function Palette(name) {

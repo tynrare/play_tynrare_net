@@ -205,4 +205,12 @@ export class Messages {
 
 		this.event('state ' + type);
 	}
+
+	draw(where, what) {
+		const place = this.find(where);
+		if(!place) {
+			throw new Error(`draw(${where}, ${what})  -> error. Can't find entry ${where}`);
+		}
+		place.write(what);
+	}
 }

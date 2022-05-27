@@ -35,13 +35,17 @@ body.fancy.game2048
 			entry#gamemeta
 				showon postinit
 				content 
-					a v5
+					a v6
 
 			entry#gameover
 				showwhile gameover
 				content
 					label#defeat Поражение
 					button#game.stateswitch
+
+			entry#devlog
+				showon devmode
+				content.mutable
 
 			entry#dust-1
 				//showon postinit
