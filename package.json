@@ -9,12 +9,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@parcel/transformer-xml": "^2.6.0",
     "hilo3d": "^1.16.2",
     "parcel": "^2.4.1",
+    "pixi.js": "^6.3.2",
     "tone": "^14.7.77"
   },
   "devDependencies": {
     "@parcel/transformer-less": "^2.4.1",
-    "@parcel/transformer-pug": "^2.4.1"
+    "@parcel/transformer-pug": "^2.4.1",
+    "querystring-es3": "^0.2.1"
   }
 }

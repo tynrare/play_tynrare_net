@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with TexturePacker https://www.codeandweb.com/texturepacker -->
+<!-- $TexturePacker:SmartUpdate:1775b3f7f84c3307ec85e0a1ab41cebd:c72c322fa4a47d72041c8b19071ce41d:7aaf76360d54ad613a486304216506c9$ -->
+<!--Format:
+n  => name of the sprite
+x  => sprite x pos in texture
+y  => sprite y pos in texture
+w  => sprite width (may be trimmed)
+h  => sprite height (may be trimmed)
+pX => x pos of the pivot point (relative to sprite width)
+pY => y pos of the pivot point (relative to sprite height)
+oX => sprite's x-corner offset (only available if trimmed)
+oY => sprite's y-corner offset (only available if trimmed)
+oW => sprite's original width (only available if trimmed)
+oH => sprite's original height (only available if trimmed)
+r => 'y' only set if sprite is rotated
+with polygon mode enabled:
+vertices   => points in sprite coordinate system (x0,y0,x1,y1,x2,y2, ...)
+verticesUV => points in sheet coordinate system (x0,y0,x1,y1,x2,y2, ...)
+triangles  => sprite triangulation, 3 vertex indices per triangle
+-->
+<TextureAtlas imagePath="animals.png" width="1024" height="1024">
+    <sprite n="bear" x="800" y="2" w="128" h="128"/>
+    <sprite n="buffalo" x="2" y="134" w="128" h="128"/>
+    <sprite n="chick" x="2" y="266" w="128" h="128"/>
+    <sprite n="chicken" x="2" y="398" w="128" h="128"/>
+    <sprite n="cow" x="2" y="530" w="128" h="128"/>
+    <sprite n="crocodile" x="2" y="662" w="128" h="128"/>
+    <sprite n="dog" x="2" y="794" w="128" h="128"/>
+    <sprite n="duck" x="134" y="134" w="128" h="128"/>
+    <sprite n="elephant" x="134" y="266" w="128" h="128"/>
+    <sprite n="frog" x="134" y="398" w="128" h="128"/>
+    <sprite n="giraffe" x="134" y="530" w="128" h="128"/>
+    <sprite n="goat" x="2" y="2" w="129" h="128"/>
+    <sprite n="gorilla" x="134" y="662" w="128" h="128"/>
+    <sprite n="hippo" x="134" y="794" w="128" h="128"/>
+    <sprite n="horse" x="266" y="134" w="128" h="128"/>
+    <sprite n="monkey" x="135" y="2" w="129" h="128"/>
+    <sprite n="moose" x="398" y="134" w="128" h="128"/>
+    <sprite n="narwhal" x="530" y="134" w="128" h="128"/>
+    <sprite n="owl" x="662" y="134" w="128" h="128"/>
+    <sprite n="panda" x="794" y="134" w="128" h="128"/>
+    <sprite n="parrot" x="266" y="266" w="128" h="128"/>
+    <sprite n="penguin" x="266" y="398" w="128" h="128"/>
+    <sprite n="pig" x="266" y="530" w="128" h="128"/>
+    <sprite n="rabbit" x="266" y="662" w="128" h="128"/>
+    <sprite n="rhino" x="268" y="2" w="129" h="128"/>
+    <sprite n="sloth" x="266" y="794" w="128" h="128"/>
+    <sprite n="snake" x="401" y="2" w="129" h="128"/>
+    <sprite n="walrus" x="534" y="2" w="129" h="128"/>
+    <sprite n="whale" x="667" y="2" w="129" h="128"/>
+    <sprite n="zebra" x="398" y="266" w="128" h="128"/>
+</TextureAtlas>

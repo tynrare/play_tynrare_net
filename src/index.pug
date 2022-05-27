@@ -5,7 +5,14 @@ head
 
 body.fancy.game2048
 	#frontdoor.fancy
-		db: include palette
+		db
+			include palette
+			include assets/animals.xml
+			images
+				img#animals(src='./assets/animals.png')
+
+			animals bear,chicken,cow,dog,elephant,giraffe,gorilla,horse,moose,owl,parrot,pig,rhino,snake,whale,buffalo,chick,crocodile,duck,frog,goat,hippo,monkey,narwhal,panda,penguin,rabbit,sloth,walrus,zebra
+
 		sequence#dust-220523.fancy.game2048
 
 			entry#gamestats.game2048
@@ -16,6 +23,7 @@ body.fancy.game2048
 
 			entry#game.game2048
 				showwhile game
+				canvas#pixi_canvas
 				content.mutable
 
 			entry#gamecontrols

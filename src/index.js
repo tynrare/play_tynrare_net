@@ -1,5 +1,4 @@
 import { Messages } from './messages.js';
-import initHilo from './render/index.js';
 import Game2048 from './game_2048/index.js';
 
 function main() {
