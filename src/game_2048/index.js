@@ -8,7 +8,8 @@ export default function main(controls) {
 	const core = new Game2048(controls, controls.find('game').contentNode);
 	try {
 		const frontdoor = document.querySelector('#frontdoor');
-		View.instance.callback(() => {
+
+		const resize = () => {
 			const width = window.innerWidth;
 			const height = window.innerHeight;
 			const min = Math.min(width, height);
@@ -18,7 +19,9 @@ export default function main(controls) {
 			} else {
 				frontdoor.style.transformOrigin = 'top';
 			}
-		});
+		};
+		View.instance.callback(resize);
+		resize();
 
 		//genTiles(controls);
 
@@ -71,9 +74,6 @@ class Event {
 
 class View extends Event {
 	init() {
-		function resize() {}
-
-		resize();
 		window.addEventListener('resize', () => this.propagate('resized'));
 
 		return super.init(...arguments);
