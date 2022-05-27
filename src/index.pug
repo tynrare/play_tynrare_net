@@ -26,26 +26,34 @@ body.fancy.game2048
 				canvas#pixi_canvas
 				content.mutable
 
-			entry#gamecontrols
+			entry#gamecontrols.game2048
 				showwhile game
 				content
 						//button#undo.disabled
 						button#game.stateswitch
 
-			entry#gamemeta
-				showon postinit
-				content 
-					a v6
-
-			entry#gameover
+			entry#gameover.game2048
 				showwhile gameover
 				content
 					label#defeat Поражение
 					button#game.stateswitch
 
+			entry#gamemeta
+				showon postinit
+				content 
+					button#credits v7
+					entry#credits
+						toggleon button credits
+						content
+							a Геймдизайн, тестирование: George
+							a Код: tynrare
+							a.small Графика: Kenney
+							a.small Шрифт: Zyzol от Szymon Furjan
+
 			entry#devlog
 				showon devmode
 				content.mutable
+
 
 			entry#dust-1
 				//showon postinit

@@ -9,6 +9,7 @@ export class Message {
 		this.contentNode = null;
 		this.showonNode = null;
 		this.hideonNode = null;
+		this.toggleonNode = null;
 		this.showwhileNode = null;
 
 		this.simple = true;
@@ -32,10 +33,11 @@ export class Message {
 		if (this.simple) {
 			this.contentNode = this.entry;
 		} else {
-			this.contentNode = this.entry.querySelector('content') || this.entry;
-			this.showonNode = this.entry.querySelector('showon');
-			this.hideonNode = this.entry.querySelector('hideon');
-			this.showwhileNode = this.entry.querySelector('showwhile');
+			this.contentNode = this.entry.querySelector(':scope > content') || this.entry;
+			this.showonNode = this.entry.querySelector(':scope > showon');
+			this.hideonNode = this.entry.querySelector(':scope > hideon');
+			this.toggleonNode = this.entry.querySelector(':scope > toggleon');
+			this.showwhileNode = this.entry.querySelector(':scope > showwhile');
 		}
 
 		this.mutable = this.contentNode.classList.contains('mutable');
@@ -47,6 +49,10 @@ export class Message {
 
 	hide() {
 		this.entry.classList.remove('show');
+	}
+
+	get visible() {
+		return this.entry.classList.contains('show');
 	}
 
 	/**
@@ -74,6 +80,10 @@ export class Message {
 
 	get content() {
 		return this.simple ? this.entry.innerHTML : this.contentNode.innerHTML;
+	}
+
+	get toggleson() {
+		return this.toggleonNode?.innerHTML;
 	}
 
 	/**
@@ -170,6 +180,10 @@ export class Messages {
 			if (message.hideson === type) {
 				message.hide();
 			}
+
+			if (message.toggleson === type) {
+				message[message.visible ? 'hide' : 'show']();
+			}
 		}
 
 		for (const k in this.listeners) {
@@ -208,7 +222,7 @@ export class Messages {
 
 	draw(where, what) {
 		const place = this.find(where);
-		if(!place) {
+		if (!place) {
 			throw new Error(`draw(${where}, ${what})  -> error. Can't find entry ${where}`);
 		}
 		place.write(what);
