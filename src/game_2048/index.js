@@ -197,10 +197,6 @@ class Game2048Tile {
 	get title() {
 		return Game2048Tile.titles[this.pow - 1] || '◌';
 	}
-
-	get color() {
-		return '#' + palette.colors[this.pow];
-	}
 }
 
 Game2048Tile.titles = [
@@ -553,24 +549,11 @@ function cssAnimate(element, name, duration) {
 	}, duration);
 }
 
-const palette = new Palette('pineapple32');
-
-function genTiles(controls) {
-	const pixels = 512;
-	const tile = 128;
-	const tiles = Math.pow(pixels / tile, 2);
-
-	let content = '';
-	for (let i = 0; i < tiles; i++) {
-		content += '<tile></tile>';
-	}
-
-	controls.find('game').write(content);
-}
-
+/*
 function Palette(name) {
 	const str = document.querySelector('db#palette-' + name).innerHTML;
 	const separator = str.includes('\n') ? '\n' : ' ';
 
 	this.colors = str.split(separator);
 }
+*/
