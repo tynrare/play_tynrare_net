@@ -94,7 +94,7 @@ class Inputs extends Event {
 		this._keyboard();
 		this._touch();
 		this.timestamp = Date.now();
-		this.threshold = 30;
+		this.threshold = 200;
 
 		return super.init(...arguments);
 	}
