@@ -3,63 +3,12 @@ html(lang="ru")
 head
 	meta(name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0")
 	meta(content="text/html; charset=UTF-8" http-equiv="Content-Type")
-	meta(charset=utf-8)
 	link(rel="stylesheet", href="./styles/reset.css")
 	link(rel="stylesheet", href="./index.less")
 	script(type="module", src="./index.js" async defer)
 
 body.fancy.game2048
-	#frontdoor.fancy
-		db
-			include palette
-			include assets/animals.xml
-			images
-				img#animals(src='./assets/animals.png')
-
-			animals chick,chicken,rabbit,pig,cow,goat,horse,dog,panda,zebra,whale,narwhal,penguin,parrot
-
-		sequence#dust-220523.fancy.game2048
-
-			entry#gamestats.game2048
-				showwhile game
-				content
-					entry#gamescore.mutable 0
-					entry#leaderscore.mutable 0
-
-			entry#game.game2048
-				showwhile game
-				canvas#pixi_canvas
-				content.mutable
-
-			entry#gamecontrols.game2048
-				showwhile game
-				content
-						//button#undo.disabled
-						button#game.stateswitch
-
-			entry#gameover.game2048
-				showwhile gameover
-				content
-					label#defeat Поражение
-					button#game.stateswitch
-
-			entry#gamemeta
-				showon postinit
-				content 
-					button#credits v8
-					entry#credits
-						toggleon button credits
-						content
-							a Геймдизайн, тестирование: George
-							a Код: tynrare
-							a.small Графика: Kenney
-							a.small Шрифт: Zyzol от Szymon Furjan
-
-			entry#devlog
-				showon devmode
-				content.mutable
-
-
+	sequence#frontdoor.fancy
 			entry#dust-1
 				//showon postinit
 				showwhile root

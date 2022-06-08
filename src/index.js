@@ -1,8 +1,7 @@
 import { Messages } from './messages.js';
-import Game2048 from './game_2048/index.js';
 
 function main() {
-	const sequence = document.querySelector('sequence#dust-220523');
+	const sequence = document.querySelector('sequence#frontdoor');
 	const controls = new Messages().init(sequence);
 
 	controls.event('postinit');
@@ -13,12 +12,11 @@ function main() {
 			game.dispose();
 		}
 
-		game = Game2048(controls);
 	});
 	controls.on('gameover', () => {
 	});
 
-	controls.state('game');
+	controls.state('root');
 	controls.event('devmode');
 }
 
