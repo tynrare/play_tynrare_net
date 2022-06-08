@@ -238,6 +238,7 @@ class Game2048 {
 		this.addNewTile();
 		this.calcScore();
 		this.draw(false);
+		this.controls.event('step');
 
 		return this;
 	}
@@ -261,6 +262,8 @@ class Game2048 {
 			this.addNewTile();
 			this.calcScore();
 			this.draw();
+
+			this.controls.event('step');
 		} else if (this.isGameOver()) {
 			this.controls.state('gameover');
 		}

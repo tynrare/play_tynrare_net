@@ -1,6 +1,10 @@
-#hilo_container,  #pixi_canvas{
+@import './assets/animals.less';
+
+#hilo_container,
+#pixi_canvas {
 	position: absolute;
-	&, canvas {
+	&,
+	canvas {
 		border-radius: 7px;
 	}
 }
@@ -10,6 +14,63 @@ sequence.fancy #dust-0 {
 		border: 2px solid gray;
 		padding: 3px 7px;
 		border-radius: 4px;
+	}
+}
+
+sequence#game2048-achievements {
+	position: absolute;
+	z-index: 1;
+
+	width: 100%;
+	background-color: #000a;
+	border-radius: 0 0 7px 7px;
+	margin: auto;
+	display: flex;
+
+	font-size: 2em;
+	font-family: 'Zyzol', 'Azeret Mono', 'Comfortaa';
+
+	entry.show {
+		display: grid;
+		grid-template-columns: 128px auto;
+		grid-template-rows: auto auto;
+		grid-template-areas:
+			'icon header'
+			'icon label';
+		color: white;
+		max-width: 512px;
+		margin: auto;
+		padding: 5px 0px;
+
+		animation: appear_achievement_entry 3s ease-in-out alternate 2 both;
+
+		@keyframes appear_achievement_entry {
+			0% {
+				margin-top: -100%;
+			}
+			10% {
+				margin-top: 0px;
+			}
+			100% {
+				margin-top: 0px;
+			}
+		}
+	}
+
+	header {
+		grid-area: header;
+		font-weight: bold;
+	}
+
+	label {
+		grid-area: label;
+		font-size: 0.7em;
+	}
+
+	icon {
+		margin: auto;
+		grid-area: icon;
+		.sprite-animals-css();
 	}
 }
 

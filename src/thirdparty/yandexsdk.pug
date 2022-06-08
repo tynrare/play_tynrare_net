@@ -1,6 +1,36 @@
+script(src="https://yandex.ru/ads/system/context.js" async)
 script(src="https://yandex.ru/games/sdk/v2")
+
 script.
-    YaGames.init().then(ysdk => {
-        console.log('Yandex SDK initialized');
-            window.ysdk = ysdk;
-        });
+
+	window.yaContextCb=window.yaContextCb||[]
+
+	YaGames.init().then(ysdk => {
+		console.log('Yandex SDK initialized');
+		window.ysdk = ysdk;
+	});
+
+	window.yaContextCb.push(()=>{
+		Ya.Context.AdvManager.render({
+			renderTo: 'yandexsdk_banner_a_bind',
+			blockId: 'R-A-1696567-15'
+		})
+	})
+
+style.
+
+	#yandexsdk_banner_a {
+		height: 128px;
+		position: absolute;
+		overflow: clip scroll;
+		max-height: 128px;
+		width: 100%;
+		bottom: 0;
+		display: flex;
+		z-index: 1;
+	}
+
+	#yandexsdk_banner_a_bind {
+		width: min-content;
+		margin: auto;
+	}

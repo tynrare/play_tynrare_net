@@ -1,3 +1,5 @@
+import { Data } from './dust-0.js';
+
 export class Message {
 	/**
 	 *
@@ -21,6 +23,7 @@ export class Message {
 	 */
 	init(entry) {
 		this.entry = entry;
+		this.data = new Data(entry);
 
 		this.parse();
 
@@ -53,6 +56,10 @@ export class Message {
 
 	get visible() {
 		return this.entry.classList.contains('show');
+	}
+
+	set visible(value) {
+		this[value ? 'show' : 'hide']();
 	}
 
 	/**
@@ -105,6 +112,7 @@ export class Messages {
 	init(content) {
 		this.guids = 0;
 		this.content = content;
+		this.data = new Data(content);
 		this.messages = {};
 
 		this.listeners = {};
@@ -122,6 +130,15 @@ export class Messages {
 		return this.messages[id] ?? null;
 	}
 
+	step() {
+		const step = Number(this.data.define('step', 0))
+		this.data.step = step + 1;
+		for (const k in this.messages) {
+			const message = this.messages[k];
+			message.visible = message.data.index == step;
+		}
+	}
+
 	parseEntries(container) {
 		for (let i = 0; i < container.children.length; i++) {
 			const el = container.children[i];
@@ -135,8 +152,11 @@ export class Messages {
 	parse(entry) {
 		// TODO: validate entry type
 
-		const id = entry.id || `i${this.guids++}`;
+		const index = this.guids++;
+		const id = entry.id || `i${index}`;
 		const message = (this.messages[id] = new Message(id).init(entry));
+
+		message.data.define('index', index);
 
 		if (message.simple) {
 			return;

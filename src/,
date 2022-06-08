@@ -86,16 +86,16 @@ body.fancy.game2048
 					entry#gamescore.mutable 0
 					entry#leaderscore.mutable 0
 
-			entry#game.game2048
-				showwhile game
-				canvas#pixi_canvas
-				content.mutable
-
 			entry#gamecontrols.game2048
 				showwhile game
 				content
 						//button#undo.disabled
 						button#game.stateswitch
+
+			entry#game.game2048
+				showwhile game
+				canvas#pixi_canvas
+				content.mutable
 
 			entry#gameover.game2048
 				showwhile gameover
